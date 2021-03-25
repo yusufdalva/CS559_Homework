@@ -127,3 +127,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Dataset file 
+data/UTKFace_downsampled.zip
+
+# Dataset
+data/UTKFace_downsampled
+
+# vscode files
+.vscode
+
