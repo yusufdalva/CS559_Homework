@@ -8,36 +8,47 @@ class AgeModel(tf.keras.Model):
     def __init__(self, model_metadata, data_format):
         super(AgeModel, self).__init__()
         self.data_format = data_format
-        self.model_backbone = self.construct_model(model_metadata[:-1])
-        assert model_metadata[-1]["type"] == "dense"
-        self.classify_layer = self.dense_layer(model_metadata[-1])
+        self.net_layers = []
+        self.construct_model(model_metadata)
         self.model_metadata = model_metadata # Holds the information about layer construction
+        assert model_metadata[-1]["type"] == "dense" and model_metadata[-1]["units"] == 1
+        # self.net = tf.keras.Sequential(layers=[layers.Input(shape=input_shape)])
+        #self.construct_model(model_metadata[:-1])
+        #assert len(self.net.layers) > 1
+        #assert model_metadata[-1]["type"] == "dense"
+        #self.net.add(self.dense_layer(model_metadata[-1]))
         print("INFO: Model constructed")
 
 
     def call(self, inputs):
-        x = self.model_backbone(inputs)
-        return self.classify_layer(x)
+        x = inputs
+        for layer in self.layers:
+            x = layer(x)
+        return x
+
+    def build_comp_graph(self, input_shape):
+        instance_shape = input_shape[1:]
+        self.build(input_shape)
+        inputs = layers.Input(shape=instance_shape)
+        self.call(inputs)
 
 
     def construct_model(self, model_metadata):
-        model = tf.keras.Sequential()
         for layer_metadata in model_metadata:
             if "type" not in layer_metadata.keys():
                 raise RuntimeError("Invalid layer entry, layer has no type in {}".format(layer_metadata))
             if layer_metadata["type"] == "conv2d":
-                model.add(self.conv2d_layer(layer_metadata))
+                self.net_layers.append(self.conv2d_layer(layer_metadata))
             elif layer_metadata["type"] == "dense":
-                model.add(self.dense_layer(layer_metadata))
+                self.net_layers.append(self.dense_layer(layer_metadata))
             elif layer_metadata["type"] == "pool":
-                model.add(self.pool_layer(layer_metadata))
+                self.net_layers.append(self.pool_layer(layer_metadata))
             elif layer_metadata["type"] == "batch_norm":
-                model.add(self.batchnorm_layer(layer_metadata))
+                self.net_layers.append(self.batchnorm_layer(layer_metadata))
             elif layer_metadata["type"] == "flatten":
-                model.add(layers.Flatten(data_format=self.data_format))
+                self.net_layers.append(layers.Flatten(data_format=self.data_format))
             else:
                 raise RuntimeError("Invalid layer type {}, should be one of (conv2d, dense, pool, batch_norm)")
-        return model
 
 
     def conv2d_layer(self, layer_metadata):

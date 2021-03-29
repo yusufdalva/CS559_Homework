@@ -34,3 +34,19 @@ if __name__ == "__main__":
     model_metadata.append({"type": "dense", "units": 1, "activation": "relu", "initializer": "xavier", "regularizer": None})
     
     model = AgeModel(model_metadata, "channels_last")
+    model.build_comp_graph((None, 91, 91, 1)) # Building computational graph to monitor dimensions of layer matrices
+    model.summary()
+
+    # Configure model training with optimizer and loss
+    optim = tf.keras.optimizers.Adam(learning_rate=0.001)
+    loss = tf.keras.losses.MeanAbsoluteError()
+    model.compile(loss=loss, optimizer=optim)
+
+    # Fit training data to model, with validation set performance
+    print("TRAINING")
+    model.fit(x=dataset.train_data[0], y=dataset.train_data[1], epochs=10, verbose=1, batch_size=32, validation_data=dataset.val_data)
+    print("TRAINING DONE")
+
+    # Evaluate model on test set
+    print("EVALUATION")
+    model.evaluate(x=dataset.test_data[0], y=dataset.test_data[1])
