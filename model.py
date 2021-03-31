@@ -12,11 +12,6 @@ class AgeModel(tf.keras.Model):
         self.construct_model(model_metadata)
         self.model_metadata = model_metadata # Holds the information about layer construction
         assert model_metadata[-1]["type"] == "dense" and model_metadata[-1]["units"] == 1
-        # self.net = tf.keras.Sequential(layers=[layers.Input(shape=input_shape)])
-        #self.construct_model(model_metadata[:-1])
-        #assert len(self.net.layers) > 1
-        #assert model_metadata[-1]["type"] == "dense"
-        #self.net.add(self.dense_layer(model_metadata[-1]))
         print("INFO: Model constructed")
 
 
