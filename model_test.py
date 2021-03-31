@@ -26,19 +26,19 @@ if __name__ == "__main__":
     # Model construction
     model_metadata = []
     model_metadata.append({"type": "conv2d", "filters": 32, "kernel_size": (5,5), "strides":(1,1), "padding":"valid", "activation": "relu", "initializer": "xavier", "regularizer": None})
-    model_metadata.append({"type": "conv2d", "filters": 32, "kernel_size": (5,5), "strides":(1,1), "padding":"valid", "activation": "relu", "initializer": "xavier", "regularizer": None})
+    model_metadata.append({"type": "conv2d", "filters": 32, "kernel_size": (5,5), "strides":(1,1), "padding":"valid", "activation": "relu", "initializer": "xavier", "regularizer": "l2"})
     model_metadata.append({"type": "batch_norm"})
     model_metadata.append({"type": "pool", "pool_type": "max", "pool_size": (2,2), "strides": None, "padding": "valid"})
     model_metadata.append({"type": "conv2d", "filters": 64, "kernel_size": (3,3), "strides":(1,1), "padding":"valid", "activation": "relu", "initializer": "xavier", "regularizer": None})
-    model_metadata.append({"type": "conv2d", "filters": 64, "kernel_size": (3,3), "strides":(1,1), "padding":"valid", "activation": "relu", "initializer": "xavier", "regularizer": None})
+    model_metadata.append({"type": "conv2d", "filters": 64, "kernel_size": (3,3), "strides":(1,1), "padding":"valid", "activation": "relu", "initializer": "xavier", "regularizer": "l2"})
     model_metadata.append({"type": "batch_norm"})
     model_metadata.append({"type": "pool", "pool_type": "max", "pool_size": (2,2), "strides": None, "padding": "valid"})
     model_metadata.append({"type": "conv2d", "filters": 128, "kernel_size": (3,3), "strides":(1,1), "padding":"valid", "activation": "relu", "initializer": "xavier", "regularizer": None})
-    model_metadata.append({"type": "conv2d", "filters": 128, "kernel_size": (3,3), "strides":(1,1), "padding":"valid", "activation": "relu", "initializer": "xavier", "regularizer": None})
+    model_metadata.append({"type": "conv2d", "filters": 128, "kernel_size": (3,3), "strides":(1,1), "padding":"valid", "activation": "relu", "initializer": "xavier", "regularizer": "l2"})
     model_metadata.append({"type": "batch_norm"})
     model_metadata.append({"type": "pool", "pool_type": "max", "pool_size": (2,2), "strides": None, "padding": "valid"})
     model_metadata.append({"type": "flatten"})
-    model_metadata.append({"type": "dense", "units": 128, "activation": "relu", "initializer": "xavier", "regularizer": None})
+    model_metadata.append({"type": "dense", "units": 128, "activation": "relu", "initializer": "xavier", "regularizer": "l2"})
     model_metadata.append({"type": "dense", "units": 1, "activation": "relu", "initializer": "xavier", "regularizer": None})
     
     model = AgeModel(model_metadata, "channels_last")
