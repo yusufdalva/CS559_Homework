@@ -1,0 +1,14 @@
+name: cs559-hw
+channels:
+  - conda-forge
+  - anaconda
+  - defaults
+dependencies:
+  - python
+  - numpy
+  - pandas
+  - pip
+  - tensorflow-gpu
+  - zipfile36
+  - cudatoolkit
+  - pillow

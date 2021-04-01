@@ -90,5 +90,5 @@ class Dataset_numpy():
     def process_image(self, img_path):
         pil_img = tf_img.load_img(img_path, color_mode=self.color_mode)
         img_data = tf_img.img_to_array(pil_img)
-        label = int((img_path.split('/')[-1]).split('_')[0])
+        label = int((img_path.split(os.sep)[-1]).split('_')[0])
         return img_data, label
