@@ -2,7 +2,9 @@ import tensorflow as tf
 import tensorflow.keras.losses as losses
 from model import AgeModel
 import os
-from data.data_utils import Dataset_numpy
+import numpy as np
+from data.data_utils import Dataset_numpy, save_dataset
+import h5py
 
 if __name__ == "__main__":
     print("Tensorflow version used: {}".format(tf.__version__))
@@ -22,6 +24,11 @@ if __name__ == "__main__":
     ## Test set
     print("Testing data shape: {}".format(dataset.test_data[0].shape))
     print("Testing labels shape: {}".format(dataset.test_data[1].shape))
+
+    save_dataset(os.path.join(os.getcwd(), 'data'), dataset) # write
+
+    data = h5py.File(os.path.join(os.path.join(os.getcwd(), 'data'), 'dataset.h5'), 'r') # read
+
 
     # Model construction
     model_metadata = []
@@ -51,10 +58,10 @@ if __name__ == "__main__":
     model.compile(loss=loss, optimizer=optim)
 
     # Fit training data to model, with validation set performance
-    print("TRAINING")
-    model.fit(x=dataset.train_data[0], y=dataset.train_data[1], epochs=10, verbose=1, batch_size=32, validation_data=dataset.val_data)
-    print("TRAINING DONE")
+    #print("TRAINING")
+    #model.fit(x=dataset.train_data[0], y=dataset.train_data[1], epochs=1, verbose=1, batch_size=64, validation_data=dataset.val_data)
+    #print("TRAINING DONE")
 
     # Evaluate model on test set
-    print("EVALUATION")
-    model.evaluate(x=dataset.test_data[0], y=dataset.test_data[1])
+    #print("EVALUATION")
+    #model.evaluate(x=dataset.test_data[0], y=dataset.test_data[1])

@@ -1,3 +1,4 @@
 zipfile36
 tensorflow
 numpy
+h5py
