@@ -2,7 +2,7 @@ import tensorflow as tf
 import tensorflow.keras.losses as losses
 from model import AgeModel
 import os
-from data.data_utils import Dataset_numpy
+from data.data_utils import Dataset, save_dataset
 
 if __name__ == "__main__":
     print("Tensorflow version used: {}".format(tf.__version__))
@@ -11,7 +11,7 @@ if __name__ == "__main__":
     train_path = os.path.join(data_path, 'training_set')
     val_path = os.path.join(data_path, 'validation_set')
     test_path = os.path.join(data_path, 'test_set')
-    dataset = Dataset_numpy(train_path, val_path, test_path, 'jpg')
+    dataset = Dataset(train_path, val_path, test_path, 'jpg')
     # Monitor dataset details
     ## Training set
     print("Training data shape: {}".format(dataset.train_data[0].shape))
@@ -22,6 +22,8 @@ if __name__ == "__main__":
     ## Test set
     print("Testing data shape: {}".format(dataset.test_data[0].shape))
     print("Testing labels shape: {}".format(dataset.test_data[1].shape))
+
+    save_dataset(os.path.join(os.getcwd(), 'data'), dataset)
 
     # Model construction
     model_metadata = []

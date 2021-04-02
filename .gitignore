@@ -133,6 +133,7 @@ data/UTKFace_downsampled.zip
 
 # Dataset
 data/UTKFace_downsampled
+*/dataset.h5
 
 # vscode files
 .vscode
