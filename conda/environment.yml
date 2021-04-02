@@ -4,11 +4,12 @@ channels:
   - anaconda
   - defaults
 dependencies:
-  - python
+  - python==3.8
+  - tensorflow-gpu=2.3
+  - cudatoolkit
   - numpy
   - pandas
-  - pip
-  - tensorflow-gpu
-  - zipfile36
-  - cudatoolkit
   - pillow
+  - pip
+  - pip:
+      - zipfile38
