@@ -3,6 +3,8 @@ import tensorflow.keras.layers as layers
 import tensorflow.keras.initializers as initializers
 import tensorflow.keras.regularizers as regularizers
 
+# TODO: Add batch_norm option to the layers
+
 
 class AgeModel(tf.keras.Model):
     def __init__(self, model_metadata, data_format):
@@ -34,16 +36,24 @@ class AgeModel(tf.keras.Model):
                 raise RuntimeError("Invalid layer entry, layer has no type in {}".format(layer_metadata))
             if layer_metadata["type"] == "conv2d":
                 self.net_layers.append(self.conv2d_layer(layer_metadata))
+                if "batch_norm" in layer_metadata.keys() and layer_metadata["batch_norm"] == True:
+                    self.net_layers.append(self.batchnorm_layer(layer_metadata))
+                    self.net_layers.append(tf.keras.layers.Activation(layer_metadata["activation"]))
             elif layer_metadata["type"] == "dense":
                 self.net_layers.append(self.dense_layer(layer_metadata))
+                if "batch_norm" in layer_metadata.keys() and layer_metadata["batch_norm"] == True:
+                    self.net_layers.append(self.batchnorm_layer(layer_metadata))
+                    self.net_layers.append(tf.keras.layers.Activation(layer_metadata["activation"]))
             elif layer_metadata["type"] == "pool":
                 self.net_layers.append(self.pool_layer(layer_metadata))
             elif layer_metadata["type"] == "batch_norm":
                 self.net_layers.append(self.batchnorm_layer(layer_metadata))
             elif layer_metadata["type"] == "flatten":
                 self.net_layers.append(layers.Flatten(data_format=self.data_format))
+            elif layer_metadata["type"] == "dropout":
+                self.net_layers.append(self.dropout_layer(layer_metadata))
             else:
-                raise RuntimeError("Invalid layer type {}, should be one of (conv2d, dense, pool, batch_norm)")
+                raise RuntimeError("Invalid layer type {}, should be one of (conv2d, dense, pool, batch_norm, dropout)")
 
 
     def conv2d_layer(self, layer_metadata):
@@ -57,10 +67,15 @@ class AgeModel(tf.keras.Model):
         if layer_metadata["regularizer"] not in ("l1", "l2", None):
             raise ValueError("Specified regularizer for {} is invalid: should be one of (l1, l2, None)".format(layer_metadata))
         else:
-            regularizer = layer_metadata["regularizer"]
+            regularizer = self.get_regularizer(layer_metadata["regularizer"])
 
         if layer_metadata["activation"] not in ("relu", "sigmoid, softmax", "tanh"):
             raise ValueError("Activation specified for {} is invalid, should be one of (relu, sigmoid, softmax, tanh)")
+
+        if "batch_norm" in layer_metadata.keys() and layer_metadata["batch_norm"] == True:
+            return layers.Conv2D(filters=layer_metadata["filters"],kernel_size=layer_metadata["kernel_size"], strides=layer_metadata["strides"],
+            padding=layer_metadata["padding"],data_format=self.data_format, activation=None, kernel_initializer=initializer, 
+            bias_initializer=initializer, kernel_regularizer=regularizer, bias_regularizer=regularizer)
 
         return layers.Conv2D(filters=layer_metadata["filters"],kernel_size=layer_metadata["kernel_size"], strides=layer_metadata["strides"],
             padding=layer_metadata["padding"],data_format=self.data_format, activation=layer_metadata["activation"], kernel_initializer=initializer, 
@@ -81,7 +96,15 @@ class AgeModel(tf.keras.Model):
         if layer_metadata["regularizer"] not in ("l1", "l2", None):
             raise ValueError("Specified regularizer for {} is invalid: should be one of (l1, l2, None)".format(layer_metadata))
         else:
-            regularizer = layer_metadata["regularizer"]
+            regularizer = self.get_regularizer(layer_metadata["regularizer"])
+
+
+        if layer_metadata["activation"] not in ("relu", "sigmoid, softmax", "tanh"):
+            raise ValueError("Activation specified for {} is invalid, should be one of (relu, sigmoid, softmax, tanh)")
+
+        if "batch_norm" in layer_metadata.keys() and layer_metadata["batch_norm"] == True:
+            return layers.Dense(units=layer_metadata["units"], activation=None, kernel_initializer=initializer, bias_initializer=initializer, 
+            kernel_regularizer=regularizer, bias_regularizer=regularizer)
 
         return layers.Dense(units=layer_metadata["units"], activation=layer_metadata["activation"], kernel_initializer=initializer, bias_initializer=initializer, 
             kernel_regularizer=regularizer, bias_regularizer=regularizer)
@@ -109,4 +132,19 @@ class AgeModel(tf.keras.Model):
         
         return layers.BatchNormalization(momentum=momentum, epsilon=epsilon)
 
+
+    def dropout_layer(self, layer_metadata):
+        # Default dropout rate is set as 0.5
+        if "rate" in layer_metadata.keys():
+            rate = layer_metadata["rate"]
+        else:
+            rate = 0.5
+        return layers.Dropout(rate)
+
+    def get_regularizer(self, type, ratio=0.01):
+        if type == "l1":
+            return tf.keras.regularizers.l1(l1=ratio)
+        elif type == "l2":
+            return tf.keras.regularizers.l2(l2=ratio)
+        return None
 
