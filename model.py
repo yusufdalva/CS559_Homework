@@ -14,7 +14,6 @@ class AgeModel(tf.keras.Model):
         self.construct_model(model_metadata)
         self.model_metadata = model_metadata # Holds the information about layer construction
         assert model_metadata[-1]["type"] == "dense" and model_metadata[-1]["units"] == 1
-        print("INFO: Model constructed")
 
 
     def call(self, inputs):
@@ -67,7 +66,7 @@ class AgeModel(tf.keras.Model):
         if layer_metadata["regularizer"] not in ("l1", "l2", None):
             raise ValueError("Specified regularizer for {} is invalid: should be one of (l1, l2, None)".format(layer_metadata))
         else:
-            regularizer = self.get_regularizer(layer_metadata["regularizer"])
+            regularizer = self.get_regularizer(layer_metadata["regularizer"], layer_metadata["reg_ratio"])
 
         if layer_metadata["activation"] not in ("relu", "sigmoid, softmax", "tanh"):
             raise ValueError("Activation specified for {} is invalid, should be one of (relu, sigmoid, softmax, tanh)")
@@ -96,7 +95,7 @@ class AgeModel(tf.keras.Model):
         if layer_metadata["regularizer"] not in ("l1", "l2", None):
             raise ValueError("Specified regularizer for {} is invalid: should be one of (l1, l2, None)".format(layer_metadata))
         else:
-            regularizer = self.get_regularizer(layer_metadata["regularizer"])
+            regularizer = self.get_regularizer(layer_metadata["regularizer"], layer_metadata["reg_ratio"])
 
 
         if layer_metadata["activation"] not in ("relu", "sigmoid, softmax", "tanh"):
