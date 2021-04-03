@@ -5,6 +5,12 @@ import os
 from data.data_utils import Dataset, save_dataset
 
 if __name__ == "__main__":
+    # Set following config to resolve GPU errors
+    config = tf.compat.v1.ConfigProto()
+    config.gpu_options.allow_growth = True
+    sess = tf.compat.v1.Session(config=config)
+    sess.as_default()
+    
     print("Tensorflow version used: {}".format(tf.__version__))
     data_path = os.path.join(os.getcwd(), 'data')
     data_path = os.path.join(data_path, 'UTKFace_downsampled')
