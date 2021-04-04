@@ -57,7 +57,7 @@ class AgeModel(tf.keras.Model):
 
     def conv2d_layer(self, layer_metadata):
         if layer_metadata["initializer"] == "xavier":
-            initializer = initializers.GlorotNormal()
+            initializer = initializers.GlorotUniform()
         elif layer_metadata["initializer"] == "random":
             initializer = initializers.RandomNormal()
         else:
@@ -86,7 +86,7 @@ class AgeModel(tf.keras.Model):
             raise ValueError("Activation specified for {} is invalid, should be one of (relu, sigmoid, softmax, tanh)")
 
         if layer_metadata["initializer"] == "xavier":
-            initializer = initializers.GlorotNormal()
+            initializer = initializers.GlorotUniform()
         elif layer_metadata["initializer"] == "random":
             initializer = initializers.RandomNormal()
         else:
